@@ -6,6 +6,7 @@ from functools import partial
 from tkinter import *
 from bs4 import BeautifulSoup
 import time
+import re
 
 
 # -----------------------------------------
@@ -18,6 +19,8 @@ class ShinobiAccess:
     def __init__(self):
         self.session = requests.Session()
         self.encoding = None
+
+        self.shop_soup = None
 
     def get_encoding(self):
         r = requests.get('http://www.shinobi.fr/')
@@ -126,6 +129,30 @@ class ShinobiAccess:
     # Shop
     def is_in_shop(self):
         page = self.session.get("http://www.shinobi.fr/index.php?page=moteur_boutique&categorie=normaux")
-        soup = BeautifulSoup(page.text, "html.parser")
-        state = soup.find(id="etatmsg").text
+        self.shop_soup = BeautifulSoup(page.text, "html.parser")
+        state = self.shop_soup.find(id="etatmsg").text
         return not ("Vous n'êtes pas au bon endroit pour effectuer cette action." in state or "Vous n'êtes pas aux Commerces !" in state)
+
+    def get_shop_potions(self):
+        pots = []
+        if self.is_in_shop():
+            for tr in self.shop_soup.find(class_="boutique").find_all("tr"):
+                tds = tr.find_all("td")
+                potion = Potion()
+                potion.img_link = tds[0].img["src"]
+                potion.name = tds[1].div.text
+                potion.effect = tds[2].text.strip()
+                potion.price = tds[3].text.replace('\n', '').replace('\t', '').replace('\r', ' ')
+                potion.id = re.search("id=(\d+)$", tds[4].a["href"]).group(1)
+                pots.append(potion)
+        return pots
+
+
+
+class Potion:
+
+    img_link = None
+    name = None
+    effect = None
+    price = 0
+    id = None

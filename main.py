@@ -89,6 +89,9 @@ class Controller:
         else:
             frameshop.FrameShop(Toplevel(), controller)
 
+    def get_shop_potions(self):
+        return self.shinobiAccess.get_shop_potions()
+
     # Login
     def connect(self, login, password):
         return self.shinobiAccess.connect(login, password)

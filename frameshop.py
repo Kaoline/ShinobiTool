@@ -12,6 +12,7 @@ class FrameShop(Frame):
 
         self.time_estimation = StringVar()
         self.shop_state = StringVar()
+        self.current_item = StringVar()
         self.quantity = IntVar()
         self.price = IntVar()
         self.can_buy = StringVar()
@@ -39,13 +40,18 @@ class FrameShop(Frame):
         self.build_results(result_frame)
 
     def build_items(self, items_frame):
-        #TODO
-        Label(items_frame, text="du vide").pack()
-        # for login in Config.accounts:
-        #     b = Radiobutton(radio_frame, text=login, variable=self.connect_account, value=login)
-        #     b.pack(anchor=W)
-        # Radiobutton(radio_frame, text="Autre compte", variable=self.connect_account, value="-1").pack(anchor=W)
-        #
+        pots = self.controller.get_shop_potions()
+
+        i = -1
+        for potion in pots:
+            i += 1
+            Radiobutton(items_frame, variable=self.current_item, value=potion.id).grid(row=i, column=0)
+            Label(items_frame, text=potion.name).grid(row=i, column=1)
+            Label(items_frame, text=potion.effect).grid(row=i, column=2)
+            Label(items_frame, text=potion.price).grid(row=i, column=3)
+            if i == 0:
+                self.current_item.set(potion.id)
+
         # # Label
         # Label(items_frame, text="Options de recherche").pack()
         #
