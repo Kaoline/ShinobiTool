@@ -104,18 +104,18 @@ class ShinobiAccess:
         return shinoobs
 
     # Delete PMs
-    def wipe_pms(self, nbToDelete):
-        nbPages = nbToDelete // 20
-        nbMessagesLastPage = nbToDelete % 20
+    def wipe_pms(self, nb_to_delete, from_page=1):
+        nb_pages = nb_to_delete // 25
+        nbMessagesLastPage = nb_to_delete % 25
 
-        for page in range(nbPages):
-            self.delete_message(20)
-            print("Page " + str(page+1) + "/" + str(nbPages) + " deleted")
-        self.delete_message(nbMessagesLastPage)
-        print(str(nbMessagesLastPage) + " messages from last page deleted. " + str(nbToDelete) + " total pages deleted.")
+        for page in range(nb_pages):
+            self.delete_message(page=from_page)
+            print("Page " + str(page+1) + "/" + str(nb_pages) + " deleted")
+        self.delete_message(nb_to_delete=nbMessagesLastPage, page=from_page)
+        print(str(nbMessagesLastPage) + " messages from last page deleted. " + str(nb_to_delete) + " total pages deleted.")
 
-    def delete_message(self, nbToDelete):
-        page = self.session.get("http://www.shinobi.fr/index.php?page=menu-messagerie")
+    def delete_message(self, nb_to_delete=25, page=1):
+        page = self.session.get("http://www.shinobi.fr/index.php?page=menu-messagerie&pg=" + str(page))
         soup = BeautifulSoup(page.text, "html.parser")
         table = soup.find(id="messagerie")
         for tr in table.find_all("tr")[1:nb_to_delete + 1]:

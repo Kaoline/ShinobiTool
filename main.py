@@ -73,9 +73,9 @@ class Controller:
             return False
 
     # Deleting PMs
-    def delete_pms(self, login, password, nbToDelete):
+    def delete_pms(self, login, password, nb_to_delete, from_page):
         self.connect(login, password)
-        self.shinobiAccess.wipe_pms(nbToDelete)
+        self.shinobiAccess.wipe_pms(nb_to_delete, from_page)
 
     # Buy in shop
     def show_shop(self, waiting_window):
